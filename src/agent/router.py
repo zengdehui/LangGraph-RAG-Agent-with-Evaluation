@@ -1,6 +1,6 @@
 from langchain_core.messages import AIMessage
 
-from src.evaluation.sampler import save_sample
+from src.evaluation.sampler import save_sample, classify_sample
 from src.state import AgentState
 
 
@@ -29,13 +29,18 @@ def evaluation_router(state: AgentState) -> dict:
             or eval_result.get("core_question_answered") == "no"
             or eval_result.get("hallucination", False)
     )
+    # 样本等级分层
+    grade = classify_sample(eval_result)
+    # 是否通过（用于下游 / 统计）
+    passed = grade in ["gold", "silver"]
     # 保存样本
     save_sample(
         user_question=user_question,
         retrieved_docs=retrieved_docs,
         final_answer=state["messages"][-1].content,
         evaluation=eval_result,
-        passed=not failed # 评估不合格时为False failed 是“违规判断”，passed 是“业务可用性判断”passed 永远等于 not failed
+        grade = grade ,# 值分为：gold 样本可直接用于训练，silver 用于清洗优化，reject 用于分析失败模式。
+        passed=passed
     )
     if failed:
         explanation = eval_result.get("explanation", "未提供具体原因")
