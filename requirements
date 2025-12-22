@@ -1,0 +1,20 @@
+# 核心环境配置
+python-dotenv>=1.0.0          # 加载.env环境变量（对应from dotenv import load_dotenv）
+
+# LangGraph 核心（智能体流程编排）
+langgraph>=0.1.14             # 构建RAG Agent的状态图（对应from langgraph.graph import ...）
+
+# LangChain 生态（RAG核心能力）
+langchain-core>=0.2.5         # LangChain核心模块（消息、工具、检索器等基类）
+langchain-openai>=0.1.7       # OpenAI模型/嵌入集成（ChatOpenAI、OpenAIEmbeddings）
+langchain-community>=0.2.5    # 社区生态（PDF加载、Chroma向量库集成）
+
+# 向量数据库（文档检索）
+chromadb>=0.5.0               # 构建/加载向量库（对应from langchain_community.vectorstores import Chroma）
+
+# PDF处理（文档加载）
+pypdf>=3.17.0                 # PyPDFLoader依赖（PDF解析核心）
+
+# 可选：若安装时出现依赖冲突，可固定以下依赖版本
+# grpcio>=1.59.0               # chromadb依赖（解决安装失败）
+# requests>=2.31.0             # HTTP请求（LLM调用依赖）
