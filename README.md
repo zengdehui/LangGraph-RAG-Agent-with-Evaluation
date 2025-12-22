@@ -72,24 +72,19 @@
 
 ```text
 LangGraph-RAG-Agent-with-Evaluation/
-│
-├── run.py                     # 项目入口
-├── .env                       # 环境变量（API Key / 模型配置）
-├── data/
-│   └── Stock_Market_Performance_2024.pdf
-│
-├── samples/
-│   └── agent_samples.jsonl    # 自动生成的样本数据
-│
 ├── src/
-│   ├── config.py              # 项目配置（路径 / 模型 / 样本位置）
-│   ├── vectorstore.py         # 向量库构建与加载
-│   ├── tools.py               # RAG 检索工具
-│   ├── nodes.py               # LangGraph 各节点逻辑（LLM / Evaluator）
-│   └── graph.py               # Agent 图结构定义
-│
+│ ├── run.py # 项目入口
+│ ├── agent/ # LangGraph Agent定义&  Answer Evaluator & Router逻辑
+│ ├── rag/ # 向量库 & 检索逻辑
+│ ├── evaluation/ # 样本
+│ ├── state.py # 结构化状态
+│ └── config.py # 极简配置（路径、参数）
+├── data/
+│ └── Stock_Market_2024.pdf # 示例文档
+├── samples/
+│ └── agent_samples.jsonl # 自动沉淀样本
+├── .env # API Key / 路径配置
 └── README.md
-```
 
 ---
 
@@ -124,68 +119,27 @@ SAMPLE_DIR=/absolute/path/to/samples
 python run.py
 ```
 
-示例交互：
+🧪 示例行为说明
+用户问题	系统行为
+今天天气如何	合理拒答（gold_refusal）
+你叫什么名字	合理拒答
+根据2024股票走势推断2025	保守拒答
+那个股涨了	若文档支持 → 正确回答
+🎯 适合哪些人阅读这个项目？
 
-```text
-请输入你的问题：2024 年涨势最好的股票有哪些？
+想深入理解 LangGraph Agent 工作流 的开发者
 
-=== 回答 ===
-2024 年股市中，科技板块表现最为突出……
-```
+不满足于“RAG 能跑就行”的工程实践者
 
-若问题与知识库无关（如天气）：
+准备在面试中展示 系统设计 & 工程取舍能力 的候选人
 
-```text
-⚠️ 本次回答未通过质量校验，原因如下：
-- 未基于检索内容回答问题
-```
+📌 后续可扩展方向
 
----
+引入「谨慎推断模式（Inference-on-Document）」
 
-## 🧪 样本数据格式（JSONL）
+不同拒答类型细分（Policy / Scope / Safety）
 
-每一次交互都会生成一条样本：
-
-```json
-{
-  "user_question": "最值得买的股票",
-  "retrieved_docs": ["📄 文档 1: ..."],
-  "final_answer": "2024 年科技股表现突出...",
-  "evaluation": {
-    "citation_used": true,
-    "core_question_answered": "yes",
-    "hallucination": false,
-    "explanation": "答案基于文档内容"
-  },
-  "passed": true,
-  "timestamp": "2025-12-17T16:57:25"
-}
-```
-
-该数据可用于：
-
-* Prompt 优化
-* Agent 行为分析
-* 构建训练 / 验证数据集
-
----
-
-## 🎯 适用场景
-
-* AI Agent / LangGraph 学习与实践
-* RAG 系统质量控制
-* 大模型数据标注与评估流程模拟
-* 面试项目展示（Agent / 数据 / Prompt 工程方向）
-
----
-
-## 🔮 后续可扩展方向
-
-* 多维度评分（Score-based Evaluator）
-* Gold / Silver / Reject 样本分级
-* Prompt A/B 测试
-* 多 Agent 协作（Planner / Critic）
-* 样本统计与可视化分析
+基于样本数据进行 Reward Model / 微调
 
 ---
 
